@@ -27,7 +27,7 @@ public:
 		Node* cur = _root;
 		while (cur != nullptr)
 		{
-			if (key = cur->_key)
+			if (key == cur->_key)
 			{
 				return true;
 			}
@@ -84,6 +84,7 @@ public:
 	void InOrder()
 	{
 		_InOrder(_root);
+		cout << endl;
 	}
 	void _InOrder(Node* root)
 	{
@@ -93,87 +94,101 @@ public:
 		cout << root->_key << " ";
 		_InOrder(root->_right);
 	}
-	bool Erase(const K& key)
-	{
-		Node* cur = _root;
-		Node* parent = cur;
-		while (cur != nullptr)
-		{
-			if (key = cur->_key)
-			{
-				//找到了
-
-				if (cur->_left == nullptr)
-				{
-					if (cur == _root)
-					{
-						_root = cur->_right;
-					}
-					else
-					{
-						if (parent->_right == cur)
-						{
-							parent->_right = cur->_right;
-						}
-						else
-						{
-							parent->_left = cur->right;
-						}
-					}
-				}
-				else if(cur->_right == nullptr)
-				{
-					if (cur == _root)
-					{
-						_root = cur->_left;
-					}
-					else
-					{
-						if (cur->_right == nullptr)
-						{
-							if (parent->_right == cur)
-							{
-								parent->_right = cur->_left;
-							}
-							else
-							{
-								parent->_left = cur->_left;
-							}
-						}
-					}
-				}
-				else// 左右都不为空
-				{
-
-				}
-				delete cur;
-				return true;
-			}
-			else if (key < cur->_key)
-			{
-				parent = cur;
-				cur = cur->_left;
-			}
-			else
-			{
-				parent = cur;
-				cur = cur->_right;
-			}
-		}
-	}
-	//~BinarySearchTree();
+	bool Erase(const K& key);
+	~BinarySearchTree(){}
 
 private:
 	Node* _root;
 };
 
-void TestBSTree1()
+
+
+template<class K>
+bool BinarySearchTree<K>::Erase(const K& key)
 {
-	BinarySearchTree<int> t;
-	int a[] = { 8,3,1,10,6,4,7,14,13 };
-	for (auto ch : a)
+	Node* cur = _root;
+	Node* parent = cur;
+	while (cur != nullptr)
 	{
-		t.Insert(ch);
+		if (key < cur->_key)
+		{
+			parent = cur;
+			cur = cur->_left;
+		}
+		else if((key > cur->_key))
+		{
+			parent = cur;
+			cur = cur->_right;
+		}
+		else
+		{
+			//找到了
+
+			if (cur->_left == nullptr)
+			{
+				if (cur == _root)
+				{
+					_root = cur->_right;
+				}
+				else
+				{
+					if (parent->_right == cur)
+					{
+						parent->_right = cur->_right;
+					}
+					else
+					{
+						parent->_left = cur->_right;
+					}
+				}
+				delete cur;
+			}
+			else if (cur->_right == nullptr)
+			{
+				if (cur == _root)
+				{
+					_root = cur->_left;
+				}
+				else
+				{
+					if (cur->_right == nullptr)
+					{
+						if (parent->_right == cur)
+						{
+							parent->_right = cur->_left;
+						}
+						else
+						{
+							parent->_left = cur->_left;
+						}
+					}
+				}
+				delete cur;
+			}
+			else// 左右都不为空
+			{
+				Node* parent = cur;
+				Node* leftMax = cur->_left;
+				while (leftMax->_right !=nullptr)
+				{
+					parent = leftMax;
+					leftMax = leftMax->_right;
+				}
+				cur->_key = leftMax->_key;
+
+				if (parent->_right == leftMax)
+				{
+					parent->_right = leftMax->_left;
+				}
+				else
+				{
+					parent->_left = leftMax->_left;
+				}
+				delete leftMax;
+			}
+
+			
+			return true;
+		}
 	}
-	t.InOrder();
 }
